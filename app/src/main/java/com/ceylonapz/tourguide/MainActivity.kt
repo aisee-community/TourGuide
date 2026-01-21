@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -58,9 +59,10 @@ class MainActivity : ComponentActivity(), TourGuideListener {
                     TourGuideScreen(
                         uiState.value, modifier = Modifier.padding(innerPadding),
                         onLanguageSelected = { lang ->
+                            TTSHelper.callTtsApi("New Language is $lang", true)
                             uiState.value = uiState.value.copy(selectedLanguage = lang)
                             app.appController.setLanguage(lang)
-                        })
+                        }, onTestRun = { app.appController.onTestRun() })
                 }
             }
         }
@@ -99,7 +101,8 @@ class MainActivity : ComponentActivity(), TourGuideListener {
 fun TourGuideScreen(
     state: TourGuideUiState,
     modifier: Modifier,
-    onLanguageSelected: (TourLanguage) -> Unit
+    onLanguageSelected: (TourLanguage) -> Unit,
+    onTestRun: () -> Unit
 ) {
 
     LaunchedEffect("first") {
@@ -111,7 +114,9 @@ fun TourGuideScreen(
         !state.isLoading &&
         state.responseText == null
     ) {
-        IdleTourGuideView()
+        IdleTourGuideView(onTestRun = {
+            onTestRun()
+        })
         return
     }
 
@@ -161,7 +166,7 @@ fun TourGuideScreen(
 
 //welcome view
 @Composable
-fun IdleTourGuideView() {
+fun IdleTourGuideView(onTestRun: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -199,6 +204,10 @@ fun IdleTourGuideView() {
                     textAlign = TextAlign.Center,
                     modifier = Modifier.widthIn(max = 320.dp)
                 )
+            }
+
+            Button(onClick = { onTestRun() }) {
+                Text(text = "Test")
             }
         }
     }

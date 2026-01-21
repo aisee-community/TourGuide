@@ -1,7 +1,6 @@
 package com.ceylonapz.tourguide.tguide
 
 import android.util.Log
-import com.ceylonapz.tourguide.BuildConfig
 import com.ceylonapz.tourguide.agent.GeminiClient
 import com.ceylonapz.tourguide.agent.TourGuideListener
 import com.ceylonapz.tourguide.agent.TourLanguage
@@ -19,6 +18,34 @@ class AppController(private val cameraCore: CameraCore) {
     var listener: TourGuideListener? = null
 
     private val geminiClient = GeminiClient()
+
+    fun onTestRun() {
+
+        val keyword = "Sri Dalada Maligawa"
+        listener?.onKeywordDetected("Scanning...")
+        listener?.onKeywordDetected(keyword)
+        listener?.onLoading()
+
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val info =
+                    geminiClient.getHistoricalInfo(keyword, currentLanguage)
+
+                Log.d(TAG, "Gemini response:\n$info")
+                listener?.onResponseReceived(info)
+                HapticUtils.one(appContext)
+
+                TTSHelper.callTtsApi(info, true)
+
+            } catch (e: Exception) {
+                LEDUtils.setled(LEDUtils.FRONT, false)
+                Log.e(TAG, "Gemini error", e)
+                listener?.onResponseReceived("Error ${e.toString()}")
+
+                TTSHelper.callTtsApi("Error ${e.message}", true)
+            }
+        }
+    }
 
     fun openMLCamera() {
 
@@ -43,7 +70,7 @@ class AppController(private val cameraCore: CameraCore) {
                 CoroutineScope(Dispatchers.Main).launch {
                     try {
                         val info =
-                            geminiClient.getHistoricalInfo(keyword,currentLanguage)
+                            geminiClient.getHistoricalInfo(keyword, currentLanguage)
 
                         Log.d(TAG, "Gemini response:\n$info")
                         listener?.onResponseReceived(info)
