@@ -13,7 +13,7 @@ import org.aisee.template_codebase.internal_utils.LEDUtils
 
 class AppController(private val cameraCore: CameraCore) {
 
-    private var currentLanguage: TourLanguage = TourLanguage.ENGLISH
+    private var currentLanguage: TourLanguage = TourLanguage.SINHALA
 
     var listener: TourGuideListener? = null
 

@@ -5,10 +5,7 @@ import android.media.MediaPlayer
 import android.util.Base64
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -18,18 +15,16 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
-import kotlin.io.use
-import kotlin.let
-import kotlin.text.isNotBlank
-import kotlin.text.orEmpty
 
 object TTSHelper {
+
+    private const val TAG = "AiSeeTG"
 
     private var mediaPlayer: MediaPlayer? = null
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    private val okHttpClient: OkHttpClient by lazy {
+    private val okHttpClient: OkHttpClient =
         OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
@@ -37,21 +32,25 @@ object TTSHelper {
             .callTimeout(90, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
             .build()
-    }
 
     const val API_LINK = "http://dev-api.aisee.ai/text-to-speech"
 
     fun callTtsApi(text: String, needCache: Boolean) {
 
-        // 🔁 Cache first
+        // Cache first
         StorageHelper.getAudio(text)?.let {
-            Log.d("zsc", "Using cached audio")
+            Log.d(TAG, "Using cached audio")
             play(it)
             return
         }
 
+        val (lang, voice) = detectLanguage(text)
+
         val body = JSONObject()
             .put("text", text)
+            .put("language", lang)
+            .put("voice", voice)
+            .put("audio_format", "mp3")
             .toString()
             .toRequestBody("application/json; charset=utf-8".toMediaType())
 
@@ -64,13 +63,13 @@ object TTSHelper {
             try {
                 okHttpClient.newCall(request).execute().use { response ->
                     if (!response.isSuccessful) {
-                        Log.e("zsc", "HTTP ${response.code}")
+                        Log.e(TAG, "HTTP ${response.code}")
                         return@use
                     }
 
                     val result = response.body?.string()
                     if (result.isNullOrEmpty()) {
-                        Log.e("zsc", "Empty response body")
+                        Log.e(TAG, "Empty response body")
                         return@use
                     }
 
@@ -83,11 +82,11 @@ object TTSHelper {
                         }
                         play(voiceResponse)
                     } else {
-                        Log.e("zsc", "voice_response empty")
+                        Log.e(TAG, "voice_response empty")
                     }
                 }
             } catch (e: Exception) {
-                Log.e("zsc", "TTS error", e)
+                Log.e(TAG, "TTS error", e)
             }
         }
     }
@@ -119,9 +118,22 @@ object TTSHelper {
         }
     }
 
+    fun detectLanguage(text: String): Pair<String, String> =
+        when {
+            text.any { it in '\u4E00'..'\u9FFF' } ->
+                "zh-CN" to "zh-CN-XiaoxiaoNeural"
+            text.any { it in '\u0D80'..'\u0DFF' } ->
+                "si-LK" to "si-LK-SameeraNeural"
+            text.any { it in "äöüß" } ->
+                "de-DE" to "de-DE-Standard-A"
+            else ->
+                "en-US" to "en-US-Standard-A"
+        }
+
     fun destroy() {
         scope.cancel()
         mediaPlayer?.release()
         mediaPlayer = null
     }
+
 }
