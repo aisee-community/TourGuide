@@ -72,6 +72,9 @@ dependencies {
     //Gemini LLM
     implementation(libs.generativeai)
 
+    //Network
+    implementation(libs.okhttp)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
