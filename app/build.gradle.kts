@@ -50,21 +50,20 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation("com.google.android.material:material:1.13.0")
+    implementation(libs.material)
 
     // VAD Submodule
     implementation(project(":vad_module"))
 
     // CameraX dependencies
-    val camerax_version = "1.5.2"
-    implementation("androidx.camera:camera-core:$camerax_version")
-    implementation("androidx.camera:camera-camera2:$camerax_version")
-    implementation("androidx.camera:camera-lifecycle:$camerax_version")
-    implementation("androidx.camera:camera-view:$camerax_version")
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
 
     // ML Kit Object Detection
-    implementation("com.google.mlkit:object-detection:17.0.2")
-    implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    implementation(libs.object1.detection)
+    implementation(libs.barcode.scanning)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
