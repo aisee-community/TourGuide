@@ -4,6 +4,7 @@ import android.util.Log
 import com.ceylonapz.tourguide.BuildConfig
 import com.ceylonapz.tourguide.agent.GeminiClient
 import com.ceylonapz.tourguide.agent.TourGuideListener
+import com.ceylonapz.tourguide.appContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,8 +21,8 @@ class AppController(private val cameraCore: CameraCore) {
     fun openMLCamera() {
 
         listener?.onKeywordDetected("Scanning...")
-
         LEDUtils.setled(LEDUtils.FRONT, true)
+        HapticUtils.one(appContext)
 
         val textUseCase = TextUseCaseFactory.create(cameraCore) { detectedText ->
 
@@ -32,6 +33,7 @@ class AppController(private val cameraCore: CameraCore) {
                 cameraCore.unbindAll()
                 LEDUtils.setled(LEDUtils.FRONT, false)
 
+                HapticUtils.one(appContext)
                 listener?.onKeywordDetected(keyword)
                 listener?.onLoading()
 
@@ -43,12 +45,14 @@ class AppController(private val cameraCore: CameraCore) {
 
                         Log.d(TAG, "Gemini response:\n$info")
                         listener?.onResponseReceived(info)
+                        HapticUtils.one(appContext)
 
                         // TTS speak(info)
                     } catch (e: Exception) {
                         LEDUtils.setled(LEDUtils.FRONT, false)
                         Log.e(TAG, "Gemini error", e)
                         listener?.onResponseReceived("Error ${e.toString()}")
+                        HapticUtils.double(appContext)
                     }
                 }
 
