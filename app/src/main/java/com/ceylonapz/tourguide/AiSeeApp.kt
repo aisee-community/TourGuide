@@ -3,6 +3,7 @@ package com.ceylonapz.tourguide
 import android.app.Application
 import android.content.Context
 import com.ceylonapz.tourguide.tguide.AppController
+import com.ceylonapz.tourguide.tguide.StorageHelper
 import org.aisee.template_codebase.camera.CameraCore
 
 class AiSeeApp : Application() {
@@ -17,6 +18,7 @@ class AiSeeApp : Application() {
         super.onCreate()
         appContext = this
 
+        StorageHelper.init(this)
         cameraCore = CameraCore(this)
         appController = AppController(cameraCore)
     }

@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.ceylonapz.tourguide.agent.TourGuideListener
 import com.ceylonapz.tourguide.agent.TourGuideUiState
 import com.ceylonapz.tourguide.agent.TourLanguage
+import com.ceylonapz.tourguide.tguide.TTSHelper
 import com.ceylonapz.tourguide.ui.theme.TourGuideTheme
 import org.aisee.template_codebase.internal_utils.AccessibilityHelper.Companion.enableAccessibilityService
 import org.aisee.template_codebase.internal_utils.AccessibilityHelper.Companion.isAccessibilityServiceEnabled
@@ -53,11 +55,12 @@ class MainActivity : ComponentActivity(), TourGuideListener {
         setContent {
             TourGuideTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    TourGuideScreen(uiState.value, modifier = Modifier.padding(innerPadding),
-                        onLanguageSelected = {lang->
-                        uiState.value = uiState.value.copy(selectedLanguage = lang)
-                        app.appController.setLanguage(lang)
-                    })
+                    TourGuideScreen(
+                        uiState.value, modifier = Modifier.padding(innerPadding),
+                        onLanguageSelected = { lang ->
+                            uiState.value = uiState.value.copy(selectedLanguage = lang)
+                            app.appController.setLanguage(lang)
+                        })
                 }
             }
         }
@@ -98,6 +101,10 @@ fun TourGuideScreen(
     modifier: Modifier,
     onLanguageSelected: (TourLanguage) -> Unit
 ) {
+
+    LaunchedEffect("first") {
+        TTSHelper.callTtsApi("Welcome to Tour Guild", true)
+    }
 
     if (
         state.detectedKeyword == null &&
@@ -209,7 +216,7 @@ fun LanguageSelector(
             .padding(bottom = 12.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        TourLanguage.values().forEach { language ->
+        TourLanguage.entries.forEach { language ->
             Text(
                 text = language.label,
                 modifier = Modifier

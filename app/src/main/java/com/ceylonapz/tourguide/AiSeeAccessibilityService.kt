@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.ceylonapz.tourguide.tguide.AppController
+import com.ceylonapz.tourguide.tguide.TTSHelper
 
 @SuppressLint("AccessibilityPolicy")
 class AiSeeAccessibilityService : AccessibilityService() {
@@ -46,6 +47,11 @@ class AiSeeAccessibilityService : AccessibilityService() {
 
     override fun onInterrupt() {
         Log.d(TAG, "Accessibility Service Interrupted")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        TTSHelper.destroy()
     }
 
     companion object {
