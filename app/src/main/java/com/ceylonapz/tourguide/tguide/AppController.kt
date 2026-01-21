@@ -13,15 +13,19 @@ class AppController(private val cameraCore: CameraCore) {
         LEDUtils.setled(LEDUtils.FRONT, true)
 
         val textUseCase = TextUseCaseFactory.create(cameraCore) { detectedText ->
-            Log.d(TAG, "TEXT FOUND: $detectedText")
 
-            // Stop camera after detection (initial version)
-            cameraCore.unbindAll()
+            val keyword = TextKeywordExtractor.extract(detectedText)
 
-            // LED OFF
-            LEDUtils.setled(LEDUtils.FRONT, false)
+            if (keyword != null) {
+                Log.d(TAG, "KEYWORD FOUND: $keyword")
 
-            // Next phase: send detectedText to Gemini
+                cameraCore.unbindAll()
+                LEDUtils.setled(LEDUtils.FRONT, false)
+
+                // 🔜 Next step: send `keyword` to Gemini
+            } else {
+                Log.d(TAG, "No quoted keyword found")
+            }
         }
 
         cameraCore.bind(listOf(textUseCase))
