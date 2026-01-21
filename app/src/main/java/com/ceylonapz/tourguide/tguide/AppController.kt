@@ -19,6 +19,8 @@ class AppController(private val cameraCore: CameraCore) {
 
     fun openMLCamera() {
 
+        listener?.onKeywordDetected("Scanning...")
+
         LEDUtils.setled(LEDUtils.FRONT, true)
 
         val textUseCase = TextUseCaseFactory.create(cameraCore) { detectedText ->
@@ -44,10 +46,13 @@ class AppController(private val cameraCore: CameraCore) {
 
                         // TTS speak(info)
                     } catch (e: Exception) {
+                        LEDUtils.setled(LEDUtils.FRONT, false)
                         Log.e(TAG, "Gemini error", e)
                         listener?.onResponseReceived("Error ${e.toString()}")
                     }
                 }
+
+                LEDUtils.setled(LEDUtils.FRONT, false)
             }
         }
 
