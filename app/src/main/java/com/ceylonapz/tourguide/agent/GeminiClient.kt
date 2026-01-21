@@ -6,6 +6,7 @@ import kotlinx.coroutines.withContext
 
 class GeminiClient(apiKey: String) {
 
+    private val language = "Sinhala"
     private val model = GenerativeModel(
         modelName = "gemini-3-pro-preview",
         apiKey = apiKey
@@ -17,7 +18,8 @@ class GeminiClient(apiKey: String) {
             val prompt = """
                 You are a professional tour guide and an audio tour guide.
                 Explain the historical significance of "$keyword"
-                in a concise and visitor-friendly way in short sentences. 
+                in $language. Use simple spoken $language. a concise and 
+                visitor-friendly way in short sentences. 
                 Do NOT use markdown, headings, bullet points, or symbols.
                 Use simple, spoken English. Keep it under 100 words.
             """.trimIndent()
