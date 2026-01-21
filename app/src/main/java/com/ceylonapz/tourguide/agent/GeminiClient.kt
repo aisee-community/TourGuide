@@ -15,9 +15,11 @@ class GeminiClient(apiKey: String) {
         withContext(Dispatchers.IO) {
 
             val prompt = """
-                You are a professional tour guide.
+                You are a professional tour guide and an audio tour guide.
                 Explain the historical significance of "$keyword"
-                in a concise and visitor-friendly way.
+                in a concise and visitor-friendly way in short sentences. 
+                Do NOT use markdown, headings, bullet points, or symbols.
+                Use simple, spoken English. Keep it under 200 words.
             """.trimIndent()
 
             val response = model.generateContent(prompt)
