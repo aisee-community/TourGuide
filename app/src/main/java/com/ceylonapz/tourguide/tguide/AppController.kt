@@ -1,6 +1,7 @@
 package com.ceylonapz.tourguide.tguide
 
 import android.util.Log
+import com.ceylonapz.tourguide.agent.GeminiClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

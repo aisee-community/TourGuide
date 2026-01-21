@@ -1,4 +1,4 @@
-package com.ceylonapz.tourguide.tguide
+package com.ceylonapz.tourguide.agent
 
 import com.google.ai.client.generativeai.GenerativeModel
 import kotlinx.coroutines.Dispatchers
