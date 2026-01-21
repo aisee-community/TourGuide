@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Tour Guide"
 include(":app")
+include(":vad_module")
