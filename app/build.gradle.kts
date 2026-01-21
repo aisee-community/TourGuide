@@ -67,6 +67,9 @@ dependencies {
     implementation(libs.barcode.scanning)
     implementation(libs.text.recognition)
 
+    //Gemini LLM
+    implementation(libs.generativeai)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

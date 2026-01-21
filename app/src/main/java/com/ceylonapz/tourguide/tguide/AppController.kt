@@ -1,15 +1,19 @@
 package com.ceylonapz.tourguide.tguide
 
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.aisee.template_codebase.camera.CameraCore
 import org.aisee.template_codebase.internal_utils.LEDUtils
 
 class AppController(private val cameraCore: CameraCore) {
 
-    fun openMLCamera() {
-        Log.d(TAG, "ML Camera opened")
+    private val geminiClient =
+        GeminiClient("AIzaSyC3OYA2zmFAGeGZe50_XUXVdCWSYTUUktM")
 
-        // LED ON while scanning
+    fun openMLCamera() {
+
         LEDUtils.setled(LEDUtils.FRONT, true)
 
         val textUseCase = TextUseCaseFactory.create(cameraCore) { detectedText ->
@@ -17,14 +21,23 @@ class AppController(private val cameraCore: CameraCore) {
             val keyword = TextKeywordExtractor.extract(detectedText)
 
             if (keyword != null) {
-                Log.d(TAG, "KEYWORD FOUND: $keyword")
 
                 cameraCore.unbindAll()
                 LEDUtils.setled(LEDUtils.FRONT, false)
 
-                // 🔜 Next step: send `keyword` to Gemini
-            } else {
-                Log.d(TAG, "No quoted keyword found")
+                // Send to Gemini
+                CoroutineScope(Dispatchers.Main).launch {
+                    try {
+                        val info =
+                            geminiClient.getHistoricalInfo(keyword)
+
+                        Log.d(TAG, "Gemini response:\n$info")
+
+                        // 🔜 Next: TTS speak(info)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Gemini error", e)
+                    }
+                }
             }
         }
 
