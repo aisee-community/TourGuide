@@ -65,6 +65,7 @@ dependencies {
     // ML Kit Object Detection
     implementation(libs.object1.detection)
     implementation(libs.barcode.scanning)
+    implementation(libs.text.recognition)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
