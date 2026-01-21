@@ -76,15 +76,6 @@ Language selection can be done via:
 
 ---
 
-## 🔒 Branch & Contribution Policy
-
-- `main` branch is **protected**
-- Direct pushes are **disabled**
-- All changes must go through **Pull Requests**
-- Code review approval required before merge
-
----
-
 ## 📦 Project Status
 
 🚧 **Active Development**
