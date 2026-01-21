@@ -4,6 +4,7 @@ import android.util.Log
 import com.ceylonapz.tourguide.BuildConfig
 import com.ceylonapz.tourguide.agent.GeminiClient
 import com.ceylonapz.tourguide.agent.TourGuideListener
+import com.ceylonapz.tourguide.agent.TourLanguage
 import com.ceylonapz.tourguide.appContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,10 +14,11 @@ import org.aisee.template_codebase.internal_utils.LEDUtils
 
 class AppController(private val cameraCore: CameraCore) {
 
+    private var currentLanguage: TourLanguage = TourLanguage.ENGLISH
+
     var listener: TourGuideListener? = null
 
-    private val geminiClient =
-        GeminiClient(BuildConfig.GEMINI_API_KEY)
+    private val geminiClient = GeminiClient()
 
     fun openMLCamera() {
 
@@ -41,7 +43,7 @@ class AppController(private val cameraCore: CameraCore) {
                 CoroutineScope(Dispatchers.Main).launch {
                     try {
                         val info =
-                            geminiClient.getHistoricalInfo(keyword)
+                            geminiClient.getHistoricalInfo(keyword,currentLanguage)
 
                         Log.d(TAG, "Gemini response:\n$info")
                         listener?.onResponseReceived(info)
@@ -61,6 +63,10 @@ class AppController(private val cameraCore: CameraCore) {
         }
 
         cameraCore.bind(listOf(textUseCase))
+    }
+
+    fun setLanguage(language: TourLanguage) {
+        currentLanguage = language
     }
 
     companion object {

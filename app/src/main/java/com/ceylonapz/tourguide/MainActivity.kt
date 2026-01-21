@@ -5,8 +5,11 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ceylonapz.tourguide.agent.TourGuideListener
 import com.ceylonapz.tourguide.agent.TourGuideUiState
+import com.ceylonapz.tourguide.agent.TourLanguage
 import com.ceylonapz.tourguide.ui.theme.TourGuideTheme
 import org.aisee.template_codebase.internal_utils.AccessibilityHelper.Companion.enableAccessibilityService
 import org.aisee.template_codebase.internal_utils.AccessibilityHelper.Companion.isAccessibilityServiceEnabled
@@ -49,7 +53,11 @@ class MainActivity : ComponentActivity(), TourGuideListener {
         setContent {
             TourGuideTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    TourGuideScreen(uiState.value, modifier = Modifier.padding(innerPadding))
+                    TourGuideScreen(uiState.value, modifier = Modifier.padding(innerPadding),
+                        onLanguageSelected = {lang->
+                        uiState.value = uiState.value.copy(selectedLanguage = lang)
+                        app.appController.setLanguage(lang)
+                    })
                 }
             }
         }
@@ -83,8 +91,13 @@ class MainActivity : ComponentActivity(), TourGuideListener {
     }
 }
 
+//main screen
 @Composable
-fun TourGuideScreen(state: TourGuideUiState, modifier: Modifier) {
+fun TourGuideScreen(
+    state: TourGuideUiState,
+    modifier: Modifier,
+    onLanguageSelected: (TourLanguage) -> Unit
+) {
 
     if (
         state.detectedKeyword == null &&
@@ -116,6 +129,11 @@ fun TourGuideScreen(state: TourGuideUiState, modifier: Modifier) {
             )
         }
 
+        LanguageSelector(
+            selected = state.selectedLanguage,
+            onSelected = onLanguageSelected
+        )
+
         Spacer(Modifier.height(12.dp))
 
         if (state.isLoading) {
@@ -134,6 +152,7 @@ fun TourGuideScreen(state: TourGuideUiState, modifier: Modifier) {
     }
 }
 
+//welcome view
 @Composable
 fun IdleTourGuideView() {
     Box(
@@ -174,6 +193,33 @@ fun IdleTourGuideView() {
                     modifier = Modifier.widthIn(max = 320.dp)
                 )
             }
+        }
+    }
+}
+
+//language selector
+@Composable
+fun LanguageSelector(
+    selected: TourLanguage,
+    onSelected: (TourLanguage) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 12.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        TourLanguage.values().forEach { language ->
+            Text(
+                text = language.label,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .clickable { onSelected(language) },
+                color = if (language == selected)
+                    MaterialTheme.colorScheme.primary
+                else
+                    MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

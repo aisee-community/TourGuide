@@ -1,27 +1,29 @@
 package com.ceylonapz.tourguide.agent
 
+import com.ceylonapz.tourguide.BuildConfig
 import com.google.ai.client.generativeai.GenerativeModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GeminiClient(apiKey: String) {
+class GeminiClient() {
 
-    private val language = "Sinhala"
     private val model = GenerativeModel(
         modelName = "gemini-3-pro-preview",
-        apiKey = apiKey
+        apiKey = BuildConfig.GEMINI_API_KEY
     )
 
-    suspend fun getHistoricalInfo(keyword: String): String =
+    suspend fun getHistoricalInfo(keyword: String, currentLanguage: TourLanguage): String =
         withContext(Dispatchers.IO) {
 
             val prompt = """
                 You are a professional tour guide and an audio tour guide.
-                Explain the historical significance of "$keyword"
-                in $language. Use simple spoken $language. a concise and 
-                visitor-friendly way in short sentences. 
-                Do NOT use markdown, headings, bullet points, or symbols.
-                Use simple, spoken English. Keep it under 100 words.
+                
+                Explain "$keyword" in ${currentLanguage.geminiName}.
+                Use simple, natural spoken language.
+                Use short sentences.
+                Do not use markdown, symbols, or lists.
+                Keep it under 80 words.
+            
             """.trimIndent()
 
             val response = model.generateContent(prompt)
