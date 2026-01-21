@@ -19,6 +19,13 @@ class GeminiClient() {
                 You are a professional tour guide and an audio tour guide.
                 
                 Explain "$keyword" in ${currentLanguage.geminiName}.
+                
+                If Sinhala 
+                but write it ONLY using English letters (phonetic Sinhala).
+                Do NOT use Sinhala letters.
+                or else 
+                Write exactly how it is pronounced when speaking.
+
                 Use simple, natural spoken language.
                 Use short sentences.
                 Do not use markdown, symbols, or lists.

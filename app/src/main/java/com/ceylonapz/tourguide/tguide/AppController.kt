@@ -13,7 +13,7 @@ import org.aisee.template_codebase.internal_utils.LEDUtils
 
 class AppController(private val cameraCore: CameraCore) {
 
-    private var currentLanguage: TourLanguage = TourLanguage.SINHALA
+    private var currentLanguage: TourLanguage = TourLanguage.ENGLISH
 
     var listener: TourGuideListener? = null
 
@@ -21,7 +21,7 @@ class AppController(private val cameraCore: CameraCore) {
 
     fun onTestRun() {
 
-        val keyword = "Sri Dalada Maligawa"
+        val keyword = "Sigiriya"
         listener?.onKeywordDetected("Scanning...")
         listener?.onKeywordDetected(keyword)
         listener?.onLoading()
