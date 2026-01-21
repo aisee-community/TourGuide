@@ -55,6 +55,17 @@ dependencies {
     // VAD Submodule
     implementation(project(":vad_module"))
 
+    // CameraX dependencies
+    val camerax_version = "1.5.2"
+    implementation("androidx.camera:camera-core:$camerax_version")
+    implementation("androidx.camera:camera-camera2:$camerax_version")
+    implementation("androidx.camera:camera-lifecycle:$camerax_version")
+    implementation("androidx.camera:camera-view:$camerax_version")
+
+    // ML Kit Object Detection
+    implementation("com.google.mlkit:object-detection:17.0.2")
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
