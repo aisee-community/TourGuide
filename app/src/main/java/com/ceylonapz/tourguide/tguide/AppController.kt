@@ -1,6 +1,7 @@
 package com.ceylonapz.tourguide.tguide
 
 import android.util.Log
+import com.ceylonapz.tourguide.BuildConfig
 import com.ceylonapz.tourguide.agent.GeminiClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,7 +12,7 @@ import org.aisee.template_codebase.internal_utils.LEDUtils
 class AppController(private val cameraCore: CameraCore) {
 
     private val geminiClient =
-        GeminiClient("AIzaSyC3OYA2zmFAGeGZe50_XUXVdCWSYTUUktM")
+        GeminiClient(BuildConfig.GEMINI_API_KEY)
 
     fun openMLCamera() {
 
