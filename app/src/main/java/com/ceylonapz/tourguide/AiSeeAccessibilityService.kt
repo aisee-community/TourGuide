@@ -7,18 +7,17 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.ceylonapz.tourguide.tguide.AppController
-import org.aisee.template_codebase.camera.CameraCore
 
 @SuppressLint("AccessibilityPolicy")
 class AiSeeAccessibilityService : AccessibilityService() {
 
-    private lateinit var cameraCore: CameraCore
     private lateinit var appCont: AppController
 
     override fun onServiceConnected() {
         Log.d(TAG, "Accessibility Service Connected")
-        cameraCore = CameraCore(appContext)
-        appCont = AppController(cameraCore)
+
+        val app = application as AiSeeApp
+        appCont = app.appController
     }
 
     override fun onKeyEvent(event: KeyEvent): Boolean {
@@ -47,11 +46,6 @@ class AiSeeAccessibilityService : AccessibilityService() {
 
     override fun onInterrupt() {
         Log.d(TAG, "Accessibility Service Interrupted")
-    }
-
-    override fun onDestroy() {
-        cameraCore.onDestroy()
-        super.onDestroy()
     }
 
     companion object {

@@ -3,6 +3,7 @@ package com.ceylonapz.tourguide.tguide
 import android.util.Log
 import com.ceylonapz.tourguide.BuildConfig
 import com.ceylonapz.tourguide.agent.GeminiClient
+import com.ceylonapz.tourguide.agent.TourGuideListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -10,6 +11,8 @@ import org.aisee.template_codebase.camera.CameraCore
 import org.aisee.template_codebase.internal_utils.LEDUtils
 
 class AppController(private val cameraCore: CameraCore) {
+
+    var listener: TourGuideListener? = null
 
     private val geminiClient =
         GeminiClient(BuildConfig.GEMINI_API_KEY)
@@ -27,6 +30,9 @@ class AppController(private val cameraCore: CameraCore) {
                 cameraCore.unbindAll()
                 LEDUtils.setled(LEDUtils.FRONT, false)
 
+                listener?.onKeywordDetected(keyword)
+                listener?.onLoading()
+
                 // Send to Gemini
                 CoroutineScope(Dispatchers.Main).launch {
                     try {
@@ -34,10 +40,12 @@ class AppController(private val cameraCore: CameraCore) {
                             geminiClient.getHistoricalInfo(keyword)
 
                         Log.d(TAG, "Gemini response:\n$info")
+                        listener?.onResponseReceived(info)
 
-                        // 🔜 Next: TTS speak(info)
+                        // TTS speak(info)
                     } catch (e: Exception) {
                         Log.e(TAG, "Gemini error", e)
+                        listener?.onResponseReceived("Error ${e.toString()}")
                     }
                 }
             }
